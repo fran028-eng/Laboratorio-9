@@ -1,0 +1,47 @@
+\
+
+
+# Crear entorno virtual
+
+python3 -m venv ansible-venv
+source ansible-venv/bin/activate
+
+#Instalar Ansible
+
+mkdir terraform-do
+cd terraform-do
+
+#Crear carpeta de trabajo y archivo de inventario
+
+mkdir terraform-do
+cd terraform-do
+
+#Crea el archivo de inventario 
+nano inventario
+
+
+#Contenido
+
+[linux]
+134.209.123.203 ansible_user=ansible
+
+[win]
+10.0.0.50
+
+[win:vars]
+ansible_user=ansible
+ansible_password=Exxtremo11111
+ansible_connection=winrm
+ansible_winrm_transport=basic
+ansible_winrm_server_cert_validation=ignore
+ansible_port=5986
+
+#Probar conectividad (ping)
+
+ansible -i inventario linux -m ping
+
+ansible -i inventario Win -m ping
+
+
+
+

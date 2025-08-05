@@ -1,0 +1,16 @@
+Comandos utilizados Practica 4: Comandos Ad-Hoc 
+
+
+#Verificar conectividad
+
+ansible linux -m ping
+
+
+#Comando ejecutado para copiar archivo:
+ansible win -m win_copy -a "src=/home/ansible/Escritorio/archivo.txt dest=C:\\Users\\ansible\\Documentos\\archivo.txt"
+
+
+#Utilizando el módulo reboot reiniciar la VM ansible 1
+
+ansible linux -b -m reboot
+

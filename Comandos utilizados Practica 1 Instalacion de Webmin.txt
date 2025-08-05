@@ -1,0 +1,34 @@
+Comandos utilizados Practica 1 Instalacion de Webmin
+
+#Actualizar lista de paquetes
+sudo apt update
+
+
+#Instalar dependencias
+sudo apt install -y wget apt-transport-https software-properties-common
+
+#Agregar la clave GPG de Webmin
+wget -qO- https://download.webmin.com/jcameron-key.asc \
+  | sudo tee /etc/apt/trusted.gpg.d/webmin.gpg >/dev/null
+
+
+#Añadir el repositorio de Webmin
+
+echo "deb https://download.webmin.com/download/repository sarge contrib" \
+  | sudo tee /etc/apt/sources.list.d/webmin.list
+
+
+
+#Instalar Webmin
+
+sudo apt update
+sudo apt install -y webmin
+
+
+#Verificar el servicio
+
+sudo systemctl status webmin
+
+#Acceso a la interfaz Web
+
+https://<IP-del-Server>:10000

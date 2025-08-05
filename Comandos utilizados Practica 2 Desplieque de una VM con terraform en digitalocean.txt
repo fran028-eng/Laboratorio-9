@@ -1,0 +1,75 @@
+Comandos utilizados Practica 2 Desplieque de una VM con terraform en digitalocean
+
+#Agrega el repositorio oficial de HashiCorp
+
+sudo apt update && sudo apt install -y gnupg software-properties-common curl
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+
+
+#Instala Terraform
+
+sudo apt update
+sudo apt install terraform -y
+
+# Verifica que se instaló correctamente
+
+terraform -v
+
+#Generar tu llave SSH 
+ssh-keygen -t rsa -b 4096 -C "francisco@parrot"
+
+
+#Crear y configurar el archivo main.tf
+
+mkdir ~/terraform-do && cd ~/terraform-do
+
+
+# Crea el archivo principal de Terraform:
+
+nano main.tf
+
+#Contenido
+provider "digitalocean" {
+  token = var.do_token
+}
+
+resource "digitalocean_droplet" "mi_droplet" {
+  name   = "droplet-parrot"
+  region = "nyc3"
+  size   = "s-1vcpu-1gb"
+  image  = "ubuntu-22-04-x64"
+  ssh_keys = [var.ssh_fingerprint]
+
+  tags = ["terraform", "practica"]
+}
+
+variable "do_token" {
+  description = "Token de la API de DigitalOcean"
+  type        = string
+  sensitive   = true
+}
+
+variable "ssh_fingerprint" {
+  description = "Fingerprint de tu llave SSH"
+  type        = string
+}
+
+
+#Crear archivo de variables
+nano terraform.tfvars
+
+#Contenido
+
+do_token        = "dop_v1_9e3443b64e60730aa0b6c487096380c437afbedf156a7849bdc4459398aeb1fd"
+ssh_fingerprint = "a0:7c:15:02:85:6f:5c:76:07:cb:41:92:26:46:08:89"
+
+
+#Inicializar, validar y aplicar Terraform
+
+terraform init
+terraform validate
+terraform plan
+terraform apply
+
+

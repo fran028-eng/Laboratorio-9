@@ -1,0 +1,83 @@
+Comandos utilizados Practica 5 Playbooks
+
+
+#Preparar inventario (inventario.ini)
+
+nano inventario.ini
+
+#contenido
+[linux]
+134.209.123.203 ansible_user=ansible ansible_become=yes ansible_become_method=sudo
+
+[win]
+10.0.0.50
+
+[win:vars]
+ansible_user=ansible
+ansible_password=Exxtremo11111
+ansible_connection=winrm
+ansible_winrm_transport=basic
+ansible_winrm_server_cert_validation=ignore
+ansible_port=5986
+
+#Verificar conectividad
+nano /root/ansible/proyecto_playbooks/playbook_windows.yml.
+
+#contenifo
+ansible -i inventario.ini linux -m ping
+ansible -i inventario.ini win -m win_ping
+
+# Crear Playbook para Windows
+---
+- name: Instalar Notepad++ en Windows
+  hosts: win
+  tasks:
+    - name: Crear carpeta C:\Temp si no existe
+      win_file:
+        path: C:\Temp
+        state: directory
+
+    - name: Descargar instalador de Notepad++
+      win_get_url:
+        url: https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.5.9/npp.8.5.9.Installer.x64.exe
+        dest: C:\Temp\npp_installer.exe
+
+    - name: Ejecutar el instalador de Notepad++
+      win_shell: C:\Temp\npp_installer.exe /S
+
+
+#Ejecutar Playbook Windows
+
+ansible-playbook -i inventario.ini playbook_windows.yml
+
+
+#Crear Playbook para Linux
+
+#contenido
+
+---
+- name: Instalar y arrancar NGINX en Linux
+  hosts: linux
+  become: yes
+  tasks:
+    - name: Actualizar caché de apt
+      apt:
+        update_cache: yes
+
+    - name: Instalar NGINX
+      apt:
+        name: nginx
+        state: present
+
+    - name: Iniciar servicio NGINX
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+#Ejecutar Playbook Linux
+
+ansible-playbook -i inventario.ini playbook_linux.yml
+
+
+
