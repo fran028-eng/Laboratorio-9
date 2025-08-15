@@ -1,11 +1,13 @@
 Comandos utilizados Practica 5 Playbooks
 
+#Paso 1: Preparar inventario
+#Crear el archivo inventario.ini:
 
-#Preparar inventario (inventario.ini)
 
 nano inventario.ini
 
-#contenido
+#Contenido:
+
 [linux]
 134.209.123.203 ansible_user=ansible ansible_become=yes ansible_become_method=sudo
 
@@ -20,14 +22,18 @@ ansible_winrm_transport=basic
 ansible_winrm_server_cert_validation=ignore
 ansible_port=5986
 
-#Verificar conectividad
-nano /root/ansible/proyecto_playbooks/playbook_windows.yml.
 
-#contenifo
+#Paso 2: Verificar conectividad
+#Antes de ejecutar playbooks, verifica que los hosts estén accesibles:
+
 ansible -i inventario.ini linux -m ping
 ansible -i inventario.ini win -m win_ping
 
-# Crear Playbook para Windows
+
+
+#Paso 3: Crear Playbook para Windows
+#Archivo: playbook_windows.yml
+
 ---
 - name: Instalar Notepad++ en Windows
   hosts: win
@@ -46,14 +52,15 @@ ansible -i inventario.ini win -m win_ping
       win_shell: C:\Temp\npp_installer.exe /S
 
 
-#Ejecutar Playbook Windows
+#Paso 4: Ejecutar Playbook Windows
 
 ansible-playbook -i inventario.ini playbook_windows.yml
 
 
-#Crear Playbook para Linux
+#Paso 5: Crear Playbook para Linux
 
-#contenido
+Archivo: playbook_linux.yml
+
 
 ---
 - name: Instalar y arrancar NGINX en Linux
@@ -75,9 +82,8 @@ ansible-playbook -i inventario.ini playbook_windows.yml
         state: started
         enabled: yes
 
-#Ejecutar Playbook Linux
+
+#Paso 6: Ejecutar Playbook Linux
 
 ansible-playbook -i inventario.ini playbook_linux.yml
-
-
 
