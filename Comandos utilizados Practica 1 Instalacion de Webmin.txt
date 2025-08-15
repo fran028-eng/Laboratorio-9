@@ -1,34 +1,84 @@
 Comandos utilizados Practica 1 Instalacion de Webmin
 
-#Actualizar lista de paquetes
-sudo apt update
+# 1. Actualizar repos
+sudo apt update && sudo apt upgrade -y
 
+# 2. Instalar dependencias
+sudo apt install -y wget apt-transport-https software-properties-common gnupg
 
-#Instalar dependencias
-sudo apt install -y wget apt-transport-https software-properties-common
-
-#Agregar la clave GPG de Webmin
+# 3. Agregar clave GPG de Webmin
 wget -qO- https://download.webmin.com/jcameron-key.asc \
-  | sudo tee /etc/apt/trusted.gpg.d/webmin.gpg >/dev/null
+  | gpg --dearmor \
+  | sudo tee /etc/apt/trusted.gpg.d/webmin.gpg > /dev/null
 
-
-#Añadir el repositorio de Webmin
-
+# 4. Añadir repositorio oficial
 echo "deb https://download.webmin.com/download/repository sarge contrib" \
   | sudo tee /etc/apt/sources.list.d/webmin.list
 
-
-
-#Instalar Webmin
-
+# 5. Actualizar e instalar Webmin
 sudo apt update
 sudo apt install -y webmin
 
+# 6. Habilitar y arrancar Webmin
+sudo systemctl enable --now webmin
 
-#Verificar el servicio
+# 7. Abrir puerto en firewall (si aplica)
+sudo ufw allow 10000/tcp
 
+# 8. Verificar estado
 sudo systemctl status webmin
 
-#Acceso a la interfaz Web
+
+
+------Acceso a la interfaz Web En el navegador:----
 
 https://<IP-del-Server>:10000
+
+Usuario: root (o usuario con privilegios sudo)
+
+Contraseña: la misma del usuario
+
+
+-----------------
+
+
+Opciones de administración a mostrar en la práctica
+
+Una vez dentro de Webmin, deberías navegar y mostrar al profesor ejemplos reales de estas funciones:
+
+Administración de usuarios
+
+Webmin → System → Users and Groups
+
+Crear usuario, eliminar usuario.
+
+Gestión de servicios
+
+Webmin → System → Bootup and Shutdown
+
+Iniciar, detener y reiniciar el servicio ssh.
+
+Configuración de red
+
+Webmin → Networking → Network Interfaces
+
+Asignar IP estática a la interfaz principal.
+
+Administración de software
+
+Webmin → System → Software Package Updates
+
+Instalar, actualizar y eliminar paquetes.
+
+Gestión de archivos y directorios
+
+Webmin → Others → File Manager
+
+Crear, editar y borrar un archivo.
+
+Monitorización del sistema
+
+Webmin → System → Running Processes
+
+Ver uso de memoria, CPU y almacenamiento.
+
