@@ -1,26 +1,36 @@
-\
-
-
-# Crear entorno virtual
+#Paso 1: Crear entorno virtual de Python
 
 python3 -m venv ansible-venv
 source ansible-venv/bin/activate
 
-#Instalar Ansible
 
-mkdir terraform-do
-cd terraform-do
 
-#Crear carpeta de trabajo y archivo de inventario
+#Paso 2: Instalar Ansible
+#Si no estás usando el entorno virtual, puedes instalar Ansible directamente en el sistema:
 
-mkdir terraform-do
-cd terraform-do
 
-#Crea el archivo de inventario 
+sudo apt update
+sudo apt install -y ansible
+
+
+#Verifica la instalación:
+
+ansible --version
+
+#Deberías ver algo como:
+ansible [core 2.xx.x]
+
+#Paso 3: Crear carpeta de trabajo
+
+mkdir ~/ansible-project
+cd ~/ansible-project
+
+
+#Paso 4: Crear archivo de inventario
+
 nano inventario
 
-
-#Contenido
+#Contenido:
 
 [linux]
 134.209.123.203 ansible_user=ansible
@@ -36,11 +46,52 @@ ansible_winrm_transport=basic
 ansible_winrm_server_cert_validation=ignore
 ansible_port=5986
 
-#Probar conectividad (ping)
+
+
+#Paso 5: Configurar usuario en clientes
+
+#Linux
+
+#Crear usuario ansible con privilegios sudo:
+sudo adduser ansible
+sudo usermod -aG sudo ansible
+
+#Configurar acceso por SSH usando llave pública desde el Controller:
+ssh-copy-id ansible@134.209.123.203
+
+
+#Windows
+
+
+#Crear usuario ansible con contraseña definida en el inventario (Exxtremo11111).
+
+#Habilitar WinRM para permitir que Ansible se conecte:
+
+
+# Ejecutar en PowerShell como administrador
+
+winrm quickconfig
+winrm set winrm/config/service/auth @{Basic="true"}
+winrm set winrm/config/service @{AllowUnencrypted="true"}
+
+
+#Paso 6: Probar conectividad
+
+#Linux:
+
 
 ansible -i inventario linux -m ping
 
-ansible -i inventario Win -m ping
+#Windows:
+
+ansible -i inventario win -m win_ping
+
+
+
+#Resultado esperado:
+
+134.209.123.203 | SUCCESS => {"changed": false, "ping": "pong"}
+10.0.0.50      | SUCCESS => {"changed": false, "ping": "pong"}
 
 
 
