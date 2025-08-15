@@ -1,16 +1,50 @@
 Comandos utilizados Practica 4: Comandos Ad-Hoc 
 
 
-#Verificar conectividad
+#Paso 1: Verificar conectividad
 
-ansible linux -m ping
+#Antes de ejecutar cualquier comando, asegúrate de que los hosts estén accesibles desde el Ansible Controller:
 
-
-#Comando ejecutado para copiar archivo:
-ansible win -m win_copy -a "src=/home/ansible/Escritorio/archivo.txt dest=C:\\Users\\ansible\\Documentos\\archivo.txt"
+ansible -i inventario linux -m ping
 
 
-#Utilizando el módulo reboot reiniciar la VM ansible 1
+#Resultado esperado:
 
-ansible linux -b -m reboot
+134.209.123.203 | SUCCESS => {"changed": false, "ping": "pong"}
+
+
+#Paso 2: Copiar archivos a Windows (win_copy)
+#Para copiar un archivo desde el Controller a un host Windows:
+
+ansible win -i inventario -m win_copy -a "src=/home/ansible/Escritorio/archivo.txt dest=C:\\Users\\ansible\\Documentos\\archivo.txt"
+
+
+
+#Paso 3: Reiniciar host Linux (reboot)
+#Para reiniciar un host Linux desde Ansible Controller:
+
+
+ansible linux -i inventario -b -m reboot
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
