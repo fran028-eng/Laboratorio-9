@@ -1,47 +1,71 @@
 Comandos utilizados Practica 2 Desplieque de una VM con terraform en digitalocean
 
-#Agrega el repositorio oficial de HashiCorp
+Requisitos previos
+#1-Tener una VM Server (Linux) que será tu Ansible Controller.
+#2-Crear una cuenta en DigitalOcean (puedes usar referido con crédito gratuito).
+#3-Generar un token de API en DigitalOcean desde tu cuenta → Settings → API → Generate Token.
+$-Tener SSH configurado en tu máquina local (o VM Server) para poder acceder a las VM creadas.
+
+
+
+#Paso 1: Preparar el sistema
+#Actualizar paquetes y agregar dependencias necesarias:
 
 sudo apt update && sudo apt install -y gnupg software-properties-common curl
+
+#Paso 2: Agregar repositorio oficial de HashiCorp
+#Agregar la clave GPG y el repositorio de Terraform:
+
 curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
 
 
-#Instala Terraform
+#Paso 3: Instalar Terraform
+#Actualizar repositorios e instalar Terraform:
 
 sudo apt update
 sudo apt install terraform -y
 
-# Verifica que se instaló correctamente
 
+#Verificar la versión instalada:
 terraform -v
 
-#Generar tu llave SSH 
+#Deberías ver algo como:
+Terraform v1.xx.x
+
+
+
+#Paso 4: Generar tu llave SSH
+#Esta llave se usará para acceder a la VM que crearás en DigitalOcean:
+
 ssh-keygen -t rsa -b 4096 -C "francisco@parrot"
 
 
-#Crear y configurar el archivo main.tf
+#Obtener fingerprint de la llave pública:
+ssh-keygen -lf ~/.ssh/id_rsa.pub
+Copia este valor para usarlo en el archivo de Terraform.
+
+
+
+#Paso 5: Crear carpeta y archivo principal de Terraform
 
 mkdir ~/terraform-do && cd ~/terraform-do
-
-
-# Crea el archivo principal de Terraform:
-
 nano main.tf
 
-#Contenido
+
+Contenido sugerido de main.tf:
+
 provider "digitalocean" {
   token = var.do_token
 }
 
 resource "digitalocean_droplet" "mi_droplet" {
-  name   = "droplet-parrot"
-  region = "nyc3"
-  size   = "s-1vcpu-1gb"
-  image  = "ubuntu-22-04-x64"
-  ssh_keys = [var.ssh_fingerprint]
-
-  tags = ["terraform", "practica"]
+  name       = "droplet-parrot"
+  region     = "nyc3"
+  size       = "s-1vcpu-1gb"
+  image      = "ubuntu-22-04-x64"
+  ssh_keys   = [var.ssh_fingerprint]
+  tags       = ["terraform", "practica"]
 }
 
 variable "do_token" {
@@ -56,20 +80,36 @@ variable "ssh_fingerprint" {
 }
 
 
-#Crear archivo de variables
+
+#Paso 6: Crear archivo de variables
+
 nano terraform.tfvars
 
-#Contenido
 
-do_token        = "dop_v1_9e3443b64e60730aa0b6c487096380c437afbedf156a7849bdc4459398aeb1fd"
-ssh_fingerprint = "a0:7c:15:02:85:6f:5c:76:07:cb:41:92:26:46:08:89"
+#Contenido:
+do_token        = "TU_TOKEN_DE_DO"
+ssh_fingerprint = "TU_FINGERPRINT_SSH"
+
 
 
 #Inicializar, validar y aplicar Terraform
 
+#Paso 7:
 terraform init
+
+#Paso 8:
 terraform validate
+
+#Paso 9:
 terraform plan
+
+#Paso 10:
 terraform apply
+
+
+#Paso 11: Validar acceso a la VM
+
+ssh root@IP_DE_TU_VM
+
 
 
